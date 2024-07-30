@@ -24,7 +24,7 @@ const User = mongoose.model('User', userSchema);
 
 app.post('/signup', async (req, res) => {
     try {
-        const { email, username, password } = req.body; // Ensure email is destructured
+        const { email, username, password } = req.body;
         if (!email || !username || !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
@@ -44,7 +44,7 @@ app.post('/signup', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     try {
-        const { identifier, password } = req.body; // Remove rememberMe from destructuring
+        const { identifier, password } = req.body; 
         if (!identifier || !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }

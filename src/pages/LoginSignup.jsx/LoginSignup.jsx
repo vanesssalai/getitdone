@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 export default function LoginSignup() {
@@ -8,6 +9,8 @@ export default function LoginSignup() {
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [loginIdentifier, setLoginIdentifier] = useState('');
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const rememberedUser = localStorage.getItem('rememberedUser');
@@ -52,10 +55,13 @@ export default function LoginSignup() {
                 localStorage.removeItem('rememberedUser');
             }
     
+            const userID = response.data.user.id;
+            navigate(`/tasks/${userID}`);
+
         } catch (e) {
             console.error('Error: ', e.message);
         }
-    };    
+    };
 
     return (
         <>
