@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function LoginSignup() {
     const [isLogin, setIsLogin] = useState(true);
@@ -9,6 +10,7 @@ export default function LoginSignup() {
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [loginIdentifier, setLoginIdentifier] = useState('');
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     const navigate = useNavigate();
 
@@ -64,57 +66,83 @@ export default function LoginSignup() {
     };
 
     return (
-        <>
-            <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
-            <form onSubmit={handleSubmit}>
-                {!isLogin && (
-                    <input 
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                )}
-                {isLogin ? (
-                    <input 
-                        type="text"
-                        placeholder="Email or Username"
-                        value={loginIdentifier}
-                        onChange={(e) => setLoginIdentifier(e.target.value)}
-                        required
-                    />
-                ) : (
-                    <input 
-                        type="text" 
-                        placeholder="Username" 
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                )}
-                <input 
-                    type="password" 
-                    placeholder="Password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <input type="submit" value={isLogin ? 'Login' : 'Sign Up'} />  
-                {isLogin && (
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={rememberMe}
-                            onChange={(e) => setRememberMe(e.target.checked)}
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="flex flex-col items-center p-6 bg-white rounded w-full max-w-sm">
+                <h1 className="mb-4 text-2xl font-semibold">{isLogin ? 'Login' : 'Sign Up'}</h1>
+                <form 
+                    className="flex flex-col space-y-4 w-full"
+                    onSubmit={handleSubmit}
+                >
+                    {!isLogin && (
+                        <input 
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="p-2 border rounded"
                         />
-                        Remember me
-                    </label>
-                )}
-            </form>
-            <button onClick={() => setIsLogin(!isLogin)}>
-                {isLogin ? 'Need an account? Sign Up' : 'Already have an account? Login'}
-            </button>
-        </>
+                    )}
+                    {isLogin ? (
+                        <input 
+                            type="text"
+                            placeholder="Email or Username"
+                            value={loginIdentifier}
+                            onChange={(e) => setLoginIdentifier(e.target.value)}
+                            required
+                            className="p-2 border rounded"
+                        />
+                    ) : (
+                        <input 
+                            type="text" 
+                            placeholder="Username" 
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                            className="p-2 border rounded"
+                        />
+                    )}
+                    <div className="relative">
+                        <input 
+                            type={passwordVisible ? "text" : "password"} 
+                            placeholder="Password" 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="p-2 border rounded w-full"
+                        />
+                        <button 
+                            type="button"
+                            onClick={() => setPasswordVisible(!passwordVisible)}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        >
+                            {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                    </div>
+                    <input 
+                        type="submit" 
+                        value={isLogin ? 'Login' : 'Sign Up'}
+                        className="p-2 border rounded cursor-pointer"
+                    />
+                    {isLogin && (
+                        <label className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                                className="form-checkbox"
+                            />
+                            <span>Remember me</span>
+                        </label>
+                    )}
+                </form>
+                <button 
+                    onClick={() => setIsLogin(!isLogin)}
+                    className="mt-4 "
+                >
+                    {isLogin ? 'Need an account? Sign Up' : 'Already have an account? Login'}
+                </button>
+            </div>
+        </div>
     )
 }
