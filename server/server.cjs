@@ -1,28 +1,73 @@
-const { MongoClient } = require('mongodb');
+const express = require('express');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const cors = require('cors');
 require('dotenv').config();
 
-async function main() {
-    const uri = `mongodb+srv://${encodeURIComponent(process.env.MONGO_USER)}:${encodeURIComponent(process.env.MONGO_PASSWORD)}@vanessa.cmfcsdg.mongodb.net/?retryWrites=true&w=majority&appName=vanessa`;
+const app = express();
+app.use(express.json());
+app.use(cors());
 
-    const client = new MongoClient(uri);
+const uri = `mongodb+srv://${encodeURIComponent(process.env.MONGO_USER)}:${encodeURIComponent(process.env.MONGO_PASSWORD)}@vanessa.cmfcsdg.mongodb.net/task-manager?retryWrites=true&w=majority&appName=vanessa`;
 
+mongoose.connect(uri)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Could not connect to MongoDB', err));
+
+const userSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true },
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true }
+});
+
+const User = mongoose.model('User', userSchema);
+
+app.post('/signup', async (req, res) => {
     try {
-        await client.connect();
-        await listDatabases(client);
-    } catch (e) {
-        console.error(e.message);
-    } finally {
-        await client.close();
+        const { email, username, password } = req.body; // Ensure email is destructured
+        if (!email || !username || !password) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Username already exists' });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = new User({ email, username, password: hashedPassword });
+        await user.save();
+        res.status(201).json({ message: 'User created successfully' });
+    } catch (error) {
+        console.error('Error creating user:', error.message);
+        res.status(500).json({ message: 'Error creating user', error: error.message });
     }
-}
+});
 
-main().catch(console.error);
+app.post('/login', async (req, res) => {
+    try {
+        const { identifier, password } = req.body; // Remove rememberMe from destructuring
+        if (!identifier || !password) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+        const user = await User.findOne({
+            $or: [{ email: identifier }, { username: identifier }]
+        });
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid email/username or password' });
+        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid email/username or password' });
+        }
 
-async function listDatabases(client) {
-    const databaseList = await client.db().admin().listDatabases();
+        res.json({ 
+            message: 'Logged in successfully',
+            user: { id: user._id, username: user.username, email: user.email }
+        });
+    } catch (error) {
+        console.error('Error logging in:', error.message);
+        res.status(500).json({ message: 'Error logging in', error: error.message });
+    }
+});
 
-    console.log('Databases:');
-    databaseList.databases.forEach(db => {
-        console.log(` - ${db.name}`);
-    });
-}
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
