@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import LoginSignup from './pages/LoginSignup.jsx/LoginSignup';
-import TaskManager from "./pages/TaskManager/TaskManager";
+import ProjectManager from "./pages/ProjectManager/ProjectManager";
 import './App.css';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
         <Router>
             <Routes>
                 <Route path='/' element={<LoginSignup />} />
-                <Route path='/tasks/:userID' element={<TaskManager />} />
+                <Route path='/Projects/:userID' element={<ProjectManager />} />
             </Routes>
         </Router>
     )

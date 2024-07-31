@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function LoginSignup() {
     const [isLogin, setIsLogin] = useState(true);
@@ -38,7 +40,7 @@ export default function LoginSignup() {
         }
     
         try {
-            const endpoint = isLogin ? 'http://localhost:3000/login' : 'http://localhost:3000/signup';
+            const endpoint = isLogin ? 'http://localhost:3000/api/loginsignup/login' : 'http://localhost:3000/api/loginsignup/signup';
             let data;
             if (isLogin) {
                 data = { identifier: loginIdentifier, password };
@@ -57,9 +59,33 @@ export default function LoginSignup() {
                 localStorage.removeItem('rememberedUser');
             }
     
-            const userID = response.data.user.id;
-            navigate(`/tasks/${userID}`);
-
+            if (isLogin) {
+                const userID = response.data.user.id;
+                toast.success('Logged In Successfully.', {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+                navigate(`/Projects/${userID}`);
+            } else {
+                toast.success('User Created Successfully. Please login.', {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+                setEmail('');
+                setUsername('');
+                setPassword('');
+                setIsLogin(true);
+            }
         } catch (e) {
             console.error('Error: ', e.message);
         }
@@ -67,6 +93,7 @@ export default function LoginSignup() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <ToastContainer />
             <div className="flex flex-col items-center p-6 bg-white rounded w-full max-w-sm">
                 <h1 className="mb-4 text-2xl font-semibold">{isLogin ? 'Login' : 'Sign Up'}</h1>
                 <form 
