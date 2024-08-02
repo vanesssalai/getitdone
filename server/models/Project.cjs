@@ -25,6 +25,10 @@ const projectSchema = new mongoose.Schema({
         ref: 'Users',
         required: true
     },
+    tasks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Task'
+    }],
 }, {
     timestamps: {
         createdAt: true, 

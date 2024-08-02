@@ -13,25 +13,29 @@ const taskSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    projectID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Projects',
-        required: true
-    },
+    subTasks: [{
+        title: String,
+        completed: {
+            type: Boolean,
+            default: false
+        }
+    }],
     priority: {
         type: String,
         required: true,
     },
     completed: {
         type: Boolean,
-        required: true,
+        default: false,
+    },
+    projectID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project',
+        required: true
     },
 }, {
-    timestamps: {
-        createdAt: true, 
-        updatedAt: true 
-    }
+    timestamps: true
 });
 
-const task = mongoose.model('tasks', taskSchema);
-module.exports = task;
+const Task = mongoose.model('Task', taskSchema);
+module.exports = Task;

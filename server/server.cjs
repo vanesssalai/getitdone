@@ -12,7 +12,8 @@ app.use(cors({
 
 const LoginSignupRoutes = require("./routes/LoginSignupRoute.cjs");
 const ProjectRoutes = require("./routes/ProjectManagerRoute.cjs");
-const ProfileRoutes = require("./routes/ProfileRoute.cjs")
+const ProfileRoutes = require("./routes/ProfileRoute.cjs");
+const TaskRoutes = require("./routes/TaskRoutes.cjs");
 
 const uri = `mongodb+srv://${encodeURIComponent(process.env.MONGO_USER)}:${encodeURIComponent(process.env.MONGO_PASSWORD)}@vanessa.cmfcsdg.mongodb.net/task-manager?retryWrites=true&w=majority&appName=vanessa`;
 
@@ -27,6 +28,7 @@ mongoose.connection.on('error', err => {
 app.use("/api/loginsignup", LoginSignupRoutes);
 app.use("/api/projects", ProjectRoutes); 
 app.use("/api/profile", ProfileRoutes);
+app.use("/api/projects", TaskRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
