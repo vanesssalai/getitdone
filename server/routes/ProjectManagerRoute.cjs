@@ -8,10 +8,10 @@ const {
     deleteProjectById
 } = require('../controllers/ProjectController.cjs');
 
-router.get('/:userID', fetchAllProjects);
-router.post('/:userID', createProject);
-router.get('/:userID/:id', fetchProjectById);
-router.put('/:userID/:id', updateProjectById);
-router.delete('/:userID/:id', deleteProjectById);
+router.get('/project/:id', fetchProjectById);
+router.put('/project/:id', updateProjectById);
+router.delete('/project/:id', deleteProjectById);
+router.get('/user/:userID', fetchAllProjects);
+router.post('/', createProject);
 
 module.exports = router;

@@ -11,8 +11,8 @@ function App() {
         <Router>
             <Routes>
                 <Route path='/' element={<LoginSignup />} />
-                <Route path='/Projects/:userID' element={<ProjectManager />} />
-                <Route path="/Task/:userID/:taskID" element={<ViewProject />} />
+                <Route path='/Home/:userID' element={<ProjectManager />} />
+                <Route path="/Project/:projectID" element={<ViewProject />} />
             </Routes>
         </Router>
     )

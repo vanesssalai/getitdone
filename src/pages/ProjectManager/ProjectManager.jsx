@@ -5,7 +5,7 @@ import { FaPlus } from "react-icons/fa";
 import { FaExclamationCircle } from "react-icons/fa";
 
 import Format from "../../layout/Format";
-import NewTaskForm from "../../components/NewTask/NewTask";
+import NewProjectForm from "../../components/NewProject/NewProject";
 
 function timeToDue(dueDate) {
     const currentDate = new Date();
@@ -29,22 +29,14 @@ export default function ProjectManager() {
 
     const fetchProjects = async () => {
         try {
-            console.log("Sending request to:", `http://localhost:3000/api/projects/${userID}`);
-            const response = await axios.get(`http://localhost:3000/api/projects/${userID}`);
+            console.log("Sending request to:", `http://localhost:3000/api/projects/user/${userID}`);
+            const response = await axios.get(`http://localhost:3000/api/projects/user/${userID}`);
             setProjects(response.data);
         } catch (error) {
             console.error("Error fetching projects:", error.response ? error.response.data : error.message);
         }
     };
 
-    const handleDeleteProject = async (projectId) => {
-        try {
-            await axios.delete(`http://localhost:3000/api/projects/${userID}/${projectId}`);
-            setProjects(projects.filter(project => project._id !== projectId));
-        } catch (error) {
-            console.error("Error deleting project:", error.message);
-        }
-    };
 
     const handleCreateProject = () => {
         setCreateProject(true);
@@ -55,18 +47,14 @@ export default function ProjectManager() {
         fetchProjects();
     }
 
-    const handleProjectNavigation = () => {
-        navigate(`/`);
+    const handleProjectNavigation = (projectID) => {
+        navigate(`/Project/${projectID}`);
     };
-
-    const handleAllProjectsNavigation = () => {
-        navigate(`/allProjects/${userID}`)
-    }
 
     return (
         <Format content={
             <div className="px-12 py-4">
-                {createProject && (<NewTaskForm handleClose={handleCloseCreateProject} />)}
+                {createProject && (<NewProjectForm handleClose={handleCloseCreateProject} />)}
                 <div className="py-4">
                     <h2 className="text-3xl font-bold my-2">Projects</h2>
                     <ul className="flex flex-wrap gap-4">
@@ -77,6 +65,7 @@ export default function ProjectManager() {
                                 style={{ 
                                     border: `1px solid ${project.backgroundColor || 'grey'}`
                                 }}
+                                onClick={() => handleProjectNavigation(project._id)} // Add this line
                             >
                                 <span 
                                     className="absolute inset-0 rounded-lg"

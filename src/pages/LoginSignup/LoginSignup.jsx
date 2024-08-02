@@ -70,7 +70,7 @@ export default function LoginSignup() {
                     draggable: true,
                     progress: undefined,
                 });
-                navigate(`/Projects/${userID}`);
+                navigate(`/Home/${userID}`);
             } else {
                 toast.success('User Created Successfully. Please login.', {
                     position: "top-center",

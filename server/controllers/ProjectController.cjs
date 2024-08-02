@@ -37,7 +37,7 @@ exports.fetchAllProjects = async (req, res) => {
 exports.fetchProjectById = async (req, res) => {
     try {
         const project = await Project.findById(req.params.id);
-        if (!project || project.userID.toString() !== req.params.userID) {
+        if (!project) {
             return res.status(404).json({ message: 'Project not found' });
         }
         res.status(200).json(project);

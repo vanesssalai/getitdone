@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { FaTimes, FaSquare } from "react-icons/fa";
 
-export default function NewTaskForm({ handleClose }) {
+export default function NewProjectForm({ handleClose }) {
     const { userID } = useParams();
     const [newProject, setNewProject] = useState({ 
         title: "", 
