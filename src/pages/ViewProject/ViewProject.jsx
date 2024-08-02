@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from 'axios';
-import { FaPlus, FaCheck } from "react-icons/fa";
+import { FaPlus, FaCheck, FaAngleRight } from "react-icons/fa";
 import Format from "../../layout/Format";
 import NewTaskForm from "../../components/NewTask/NewTask";
 
@@ -46,6 +46,7 @@ export default function ViewProject() {
         try {
             const response = await axios.get(`http://localhost:3000/api/projects/${projectID}/tasks`);
             const fetchedTasks = response.data;
+            console.log(response.data);
 
             const sortedTasks = {
                 high: fetchedTasks.filter(task => task.priority === 'high'),
@@ -76,12 +77,19 @@ export default function ViewProject() {
     const renderTask = (task) => (
         <li key={task._id} className="w-4/5 bg-white p-2 rounded-lg flex items-center justify-between">
             <span className={task.completed ? "line-through" : ""}>{task.title}</span>
-            <button
-                onClick={() => toggleTaskCompletion(task._id, task.completed)}
-                className={`p-2 rounded-full ${task.completed ? 'bg-green-500' : 'bg-gray-200'}`}
-            >
-                {task.completed && <FaCheck className="text-white w-2 h-2" />}
-            </button>
+            {task.subTasks && task.subTasks.length > 0 ? (
+                <button
+                    onClick={() => toggleTaskCompletion(task._id, task.completed)}
+                    className={`p-2 rounded-full ${task.completed ? 'bg-green-500' : 'bg-gray-200'}`}
+                >
+                    {task.completed && <FaCheck className="text-white w-2 h-2" />}
+                </button>
+            ) : (
+                <button>
+                    <FaAngleRight style={{fill: 'gray'}}/>
+                </button>
+            )}
+            
         </li>
     );
 
