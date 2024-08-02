@@ -30,7 +30,7 @@ exports.fetchAllProjects = async (req, res) => {
       console.error('Error fetching projects:', error.message);
       res.status(500).json({ message: 'Error fetching projects', error: error.message });
     }
-  };
+};
 
 exports.fetchProjectById = async (req, res) => {
     try {

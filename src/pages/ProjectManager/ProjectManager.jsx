@@ -8,7 +8,13 @@ import Format from "../../layout/Format";
 export default function ProjectManager() {
     const { userID } = useParams();
     const [projects, setProjects] = useState([]);
-    const [newProject, setNewProject] = useState({ title: "", description: "", dueDate: "", tags: "", userID });
+    const [newProject, setNewProject] = useState({ 
+        title: "", 
+        description: "", 
+        dueDate: "", 
+        tags: "", 
+        userID 
+    });
 
     useEffect(() => {
         fetchProjects();
