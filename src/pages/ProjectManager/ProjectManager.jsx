@@ -2,19 +2,26 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaPlus } from "react-icons/fa";
+import { FaExclamationCircle } from "react-icons/fa";
 
 import Format from "../../layout/Format";
+import NewTaskForm from "../../components/NewTask/NewTask";
+
+function timeToDue(dueDate) {
+    const currentDate = new Date();
+    const dueDateObject = new Date(dueDate);
+    const timeDifference = dueDateObject - currentDate;
+    const daysToDue = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    
+    return daysToDue;
+}
 
 export default function ProjectManager() {
     const { userID } = useParams();
     const [projects, setProjects] = useState([]);
-    const [newProject, setNewProject] = useState({ 
-        title: "", 
-        description: "", 
-        dueDate: "", 
-        tags: "", 
-        userID 
-    });
+    const [createProject, setCreateProject] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchProjects();
@@ -24,25 +31,9 @@ export default function ProjectManager() {
         try {
             console.log("Sending request to:", `http://localhost:3000/api/projects/${userID}`);
             const response = await axios.get(`http://localhost:3000/api/projects/${userID}`);
-            console.log("Received response:", response.data);
             setProjects(response.data);
         } catch (error) {
-          console.error("Error fetching projects:", error.response ? error.response.data : error.message);
-        }
-      };
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewProject({ ...newProject, [name]: name === 'tags' ? value.split(',').map(tag => tag.trim()) : value });
-    };
-
-    const handleCreateProject = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post(`http://localhost:3000/api/projects`, { ...newProject, userID });
-            setProjects([...projects, response.data]);
-            setNewProject({ title: "", description: "", dueDate: "", tags: "", userID });
-        } catch (error) {
-            console.error("Error creating project:", error.message);
+            console.error("Error fetching projects:", error.response ? error.response.data : error.message);
         }
     };
 
@@ -55,56 +46,78 @@ export default function ProjectManager() {
         }
     };
 
+    const handleCreateProject = () => {
+        setCreateProject(true);
+    }
+
+    const handleCloseCreateProject = () => {
+        setCreateProject(false);
+        fetchProjects();
+    }
+
+    const handleProjectNavigation = () => {
+        navigate(`/`);
+    };
+
+    const handleAllProjectsNavigation = () => {
+        navigate(`/allProjects/${userID}`)
+    }
+
     return (
         <Format content={
-            <>
-                <h1>Project Manager</h1>
-                <form onSubmit={handleCreateProject}>
-                    <input 
-                        type="text" 
-                        name="title" 
-                        placeholder="Title" 
-                        value={newProject.title} 
-                        onChange={handleInputChange} 
-                        required 
-                    />
-                    <input 
-                        type="text" 
-                        name="description" 
-                        placeholder="Description" 
-                        value={newProject.description} 
-                        onChange={handleInputChange} 
-                        required 
-                    />
-                    <input 
-                        type="date" 
-                        name="dueDate" 
-                        placeholder="Due Date" 
-                        value={newProject.dueDate} 
-                        onChange={handleInputChange} 
-                        required 
-                    />
-                    <input 
-                        type="text" 
-                        name="tags" 
-                        placeholder="Tags (comma separated)" 
-                        value={newProject.tags} 
-                        onChange={handleInputChange} 
-                    />
-                    <button type="submit"><FaPlus /> Add New Project</button>
-                </form>
-                <ul>
-                    {projects.map(project => (
-                        <li key={project._id}>
-                            <h3>{project.title}</h3>
-                            <p>{project.description}</p>
-                            <p>Due: {project.dueDate}</p>
-                            <p>Tags: {project.tags.join(", ")}</p>
-                            <button onClick={() => handleDeleteProject(project._id)}>Delete</button>
+            <div className="px-12 py-4">
+                {createProject && (<NewTaskForm handleClose={handleCloseCreateProject} />)}
+                <div className="py-4">
+                    <h2 className="text-3xl font-bold my-2">Projects</h2>
+                    <ul className="flex flex-wrap gap-4">
+                        {projects.map(project => (
+                            <li 
+                                key={project._id} 
+                                className="relative p-4 rounded-lg min-w-[200px] min-h-[150px] cursor-pointer"
+                                style={{ 
+                                    border: `1px solid ${project.backgroundColor || 'grey'}`
+                                }}
+                            >
+                                <span 
+                                    className="absolute inset-0 rounded-lg"
+                                    style={{ 
+                                        backgroundColor: project.backgroundColor || 'grey', 
+                                        opacity: 0.6,
+                                        zIndex: -1 
+                                    }}
+                                    
+                                />
+                                <h3 className="text-xl font-semibold">{project.title}</h3>
+                                {timeToDue(project.dueDate) > 7 ? (
+                                    <p>{timeToDue(project.dueDate)} days to due date</p>
+                                ) : timeToDue(project.dueDate) > 1 ? (
+                                    <p><FaExclamationCircle className="inline-block align-middle mr-1"  style={{ color: "#dc2626" }}/> {timeToDue(project.dueDate)} days to due date</p>
+                                ) : (
+                                    <p><FaExclamationCircle className="inline-block align-middle mr-1" style={{ color: "#dc2626" }}/> {timeToDue(project.dueDate)} day to due date</p>
+                                )}
+                                <div className="flex flex-wrap gap-2">
+                                    {project.tags.map((tag, index) => (
+                                        <span key={index} className="bg-gray-300 px-2 py-1 rounded-md text-sm">
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            </li>
+                        ))}
+                        <li>
+                            <button 
+                                className="bg-gray-100 p-4 rounded-lg flex items-center justify-center min-w-[200px] min-h-[150px] hover:bg-gray-200"
+                                onClick={handleCreateProject}
+                            >
+                                <FaPlus />  Add New Project
+                            </button>
                         </li>
-                    ))}
-                </ul>
-            </>
+                    </ul>
+                </div>
+                <div>
+                    <h1>Due Soon</h1>
+                </div>
+            </div>
         } />
     );
 }

@@ -149,7 +149,7 @@ export default function LoginSignup() {
                     <input 
                         type="submit" 
                         value={isLogin ? 'Login' : 'Sign Up'}
-                        className="p-2 border rounded cursor-pointer"
+                        className="p-2 border rounded cursor-pointer bg-gray-100 hover:bg-gray-200"
                     />
                     {isLogin && (
                         <label className="flex items-center space-x-2">

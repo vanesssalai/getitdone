@@ -2,13 +2,15 @@ const Project = require("../models/Project.cjs");
 
 exports.createProject = async (req, res) => {
     try {
-        const { title, description, dueDate, tags, userID } = req.body;
+        const { title, description, dueDate, tags, backgroundColor, userID } = req.body;
 
         const project = new Project({
             title,
             description,
             dueDate,
             tags: Array.isArray(tags) ? tags : [],
+            backgroundColor,
+            createDate: new Date(),
             userID
         });
 
@@ -23,12 +25,12 @@ exports.createProject = async (req, res) => {
 exports.fetchAllProjects = async (req, res) => {
     console.log("Received request for userID:", req.params.userID);
     try {
-      const projects = await Project.find({ userID: req.params.userID });
-      console.log("Found projects:", projects);
-      res.status(200).json(projects);
+        const projects = await Project.find({ userID: req.params.userID });
+        console.log("Found projects:", projects);
+        res.status(200).json(projects);
     } catch (error) {
-      console.error('Error fetching projects:', error.message);
-      res.status(500).json({ message: 'Error fetching projects', error: error.message });
+        console.error('Error fetching projects:', error.message);
+        res.status(500).json({ message: 'Error fetching projects', error: error.message });
     }
 };
 
@@ -47,10 +49,10 @@ exports.fetchProjectById = async (req, res) => {
 
 exports.updateProjectById = async (req, res) => {
     try {
-        const { title, description, dueDate, tags, userID } = req.body;
+        const { title, description, dueDate, tags, backgroundColor, userID } = req.body;
         const project = await Project.findOneAndUpdate(
             { _id: req.params.id, userID },
-            { title, description, dueDate, tags: Array.isArray(tags) ? tags : [] },
+            { title, description, dueDate, tags: Array.isArray(tags) ? tags : [], backgroundColor },
             { new: true, runValidators: true }
         );
 

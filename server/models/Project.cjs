@@ -16,10 +16,19 @@ const projectSchema = new mongoose.Schema({
     tags: {
         type: [String], 
     },
+    backgroundColor: {
+        type: String,
+        default: "grey"
+    },
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Users',
         required: true
+    },
+}, {
+    timestamps: {
+        createdAt: true, 
+        updatedAt: true 
     }
 });
 

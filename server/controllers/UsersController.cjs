@@ -1,5 +1,5 @@
-const User = require("../models/Users.cjs");
-const bcrypt = require("bcrypt");
+const User = require('../models/Users.cjs');
+const bcrypt = require('bcrypt');
 
 exports.signup = async (req, res) => {
     try {
@@ -51,3 +51,13 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: 'Error logging in', error: error.message });
     }
 };
+
+exports.fetchProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        res.status(200).json({ user, msg: 'Fetched Profile Successfully' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ msg: 'Error Fetching Profile' });
+    }
+}
