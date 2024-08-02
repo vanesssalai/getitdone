@@ -52,7 +52,7 @@ export default function ProjectManager() {
     };
 
     return (
-        <Format content={
+        <Format userID={userID} content={
             <div className="px-12 py-4">
                 {createProject && (<NewProjectForm handleClose={handleCloseCreateProject} />)}
                 <div className="py-4">

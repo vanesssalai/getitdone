@@ -112,7 +112,7 @@ export default function ViewProject() {
     }
 
     return (
-        <Format content={
+        <Format userID={project.userID} content={
             <div className="px-12 py-4">
                 <div className="flex flex-row justify-between">
                     <div className="flex flex-col flex-start">

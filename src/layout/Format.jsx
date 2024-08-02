@@ -1,10 +1,10 @@
 import Header from "./Header"
 import Footer from "./Foorter"
 
-export default function Format({content}) {
+export default function Format({userID, content}) {
     return (
         <div>
-            <Header />
+            <Header userID={userID}/>
                 <main>
                     {content}
                 </main>
