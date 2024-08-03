@@ -100,6 +100,9 @@ export default function ProjectManager() {
                             </li>
                         </ul>
                     </div>
+                    <div className="py-4">
+                        <h2 className="text-3xl font-bold my-2">Due Soon</h2>
+                    </div>
                 </div>
             </>
         } />
