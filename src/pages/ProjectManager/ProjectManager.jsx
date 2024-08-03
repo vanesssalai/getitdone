@@ -3,18 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaPlus } from "react-icons/fa";
 import { FaExclamationCircle } from "react-icons/fa";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Format from "../../layout/Format";
 import NewProjectForm from "../../components/NewProject/NewProject";
-
-function timeToDue(dueDate) {
-    const currentDate = new Date();
-    const dueDateObject = new Date(dueDate);
-    const timeDifference = dueDateObject - currentDate;
-    const daysToDue = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-    
-    return daysToDue;
-}
+import { calculateProgress, timeToEnd } from "../../components/ProgressCalculator/ProgressCalculator";
 
 export default function ProjectManager() {
     const { userID } = useParams();
@@ -37,7 +31,6 @@ export default function ProjectManager() {
         }
     };
 
-
     const handleCreateProject = () => {
         setCreateProject(true);
     }
@@ -53,60 +46,62 @@ export default function ProjectManager() {
 
     return (
         <Format userID={userID} content={
-            <div className="px-12 py-4">
-                {createProject && (<NewProjectForm handleClose={handleCloseCreateProject} />)}
-                <div className="py-4">
-                    <h2 className="text-3xl font-bold my-2">Projects</h2>
-                    <ul className="flex flex-wrap gap-4">
-                        {projects.map(project => (
-                            <li 
-                                key={project._id} 
-                                className="relative p-4 rounded-lg min-w-[200px] min-h-[150px] cursor-pointer"
-                                style={{ 
-                                    border: `1px solid ${project.backgroundColor || 'grey'}`
-                                }}
-                                onClick={() => handleProjectNavigation(project._id)} // Add this line
-                            >
-                                <span 
-                                    className="absolute inset-0 rounded-lg"
+            <>
+                <ToastContainer />
+                <div className="px-12 py-4">
+                    {createProject && (<NewProjectForm handleClose={handleCloseCreateProject} />)}
+                    <div className="py-4">
+                        <h2 className="text-3xl font-bold my-2">Projects</h2>
+                        <ul className="flex flex-wrap gap-4">
+                            {projects.map(project => (
+                                <li 
+                                    key={project._id} 
+                                    className="relative p-4 rounded-lg min-w-[200px] min-h-[150px] cursor-pointer"
                                     style={{ 
-                                        backgroundColor: project.backgroundColor || 'grey', 
-                                        opacity: 0.6,
-                                        zIndex: -1 
+                                        border: `1px solid ${project.backgroundColor || 'grey'}`
                                     }}
-                                    
-                                />
-                                <h3 className="text-xl font-semibold">{project.title}</h3>
-                                {timeToDue(project.dueDate) > 7 ? (
-                                    <p>{timeToDue(project.dueDate)} days to due date</p>
-                                ) : timeToDue(project.dueDate) > 1 ? (
-                                    <p><FaExclamationCircle className="inline-block align-middle mr-1"  style={{ color: "#dc2626" }}/> {timeToDue(project.dueDate)} days to due date</p>
-                                ) : (
-                                    <p><FaExclamationCircle className="inline-block align-middle mr-1" style={{ color: "#dc2626" }}/> {timeToDue(project.dueDate)} day to due date</p>
-                                )}
-                                <div className="flex flex-wrap gap-2">
-                                    {project.tags.map((tag, index) => (
-                                        <span key={index} className="bg-gray-300 px-2 py-1 rounded-md text-sm">
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
+                                    onClick={() => handleProjectNavigation(project._id)}
+                                >
+                                    <span 
+                                        className="absolute inset-0 rounded-lg"
+                                        style={{ 
+                                            backgroundColor: project.backgroundColor || 'grey', 
+                                            opacity: 0.6,
+                                            zIndex: -1 
+                                        }}
+                                    />
+                                    <h3 className="text-xl font-semibold">{project.title}</h3>
+                                    <div className="w-full bg-gray-100 rounded-full h-2.5 my-2 border border-gray-300">
+                                        <div className="bg-green-400 h-2.5 rounded-full" style={{ width: `${calculateProgress(project.startDate, project.endDate)}%` }}></div>
+                                    </div>
+                                    {timeToEnd(project.endDate) > 7 ? (
+                                        <p>{timeToEnd(project.endDate)} days to end date</p>
+                                    ) : timeToEnd(project.endDate) > 1 ? (
+                                        <p><FaExclamationCircle className="inline-block align-middle mr-1"  style={{ color: "#dc2626" }}/> {timeToEnd(project.endDate)} days to end date</p>
+                                    ) : (
+                                        <p><FaExclamationCircle className="inline-block align-middle mr-1" style={{ color: "#dc2626" }}/> {timeToEnd(project.endDate)} day to end date</p>
+                                    )}
+                                    <div className="flex flex-wrap gap-2">
+                                        {project.tags.map((tag, index) => (
+                                            <span key={index} className="bg-gray-300 px-2 py-1 rounded-md text-sm">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </li>
+                            ))}
+                            <li>
+                                <button 
+                                    className="bg-gray-100 p-4 rounded-lg flex items-center justify-center min-w-[200px] min-h-[150px] hover:bg-gray-200"
+                                    onClick={handleCreateProject}
+                                >
+                                    <FaPlus />  Add New Project
+                                </button>
                             </li>
-                        ))}
-                        <li>
-                            <button 
-                                className="bg-gray-100 p-4 rounded-lg flex items-center justify-center min-w-[200px] min-h-[150px] hover:bg-gray-200"
-                                onClick={handleCreateProject}
-                            >
-                                <FaPlus />  Add New Project
-                            </button>
-                        </li>
-                    </ul>
+                        </ul>
+                    </div>
                 </div>
-                <div>
-                    <h1>Due Soon</h1>
-                </div>
-            </div>
+            </>
         } />
     );
 }

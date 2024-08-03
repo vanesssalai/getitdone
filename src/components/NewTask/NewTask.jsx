@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import axios from 'axios';
 import { FaTimes, FaPlus } from "react-icons/fa";
 
-export default function NewTaskForm({ handleClose, priority, projectID }) {
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+export default function NewTaskForm({ handleClose, priority, projectID, projectEndDate, projectStartDate }) {
     const [newTask, setNewTask] = useState({ 
         title: "", 
         description: "", 
@@ -40,8 +43,19 @@ export default function NewTaskForm({ handleClose, priority, projectID }) {
         });
     };
 
+    const validateDueDate = (taskDueDate) => {
+        const projectEnd = new Date(projectEndDate);
+        const projectStart = new Date(projectStartDate)
+        const taskDue = new Date(taskDueDate);
+        return (taskDue <= projectEnd && taskDue >= projectStart);
+    };
+
     const handleCreateTask = async (e) => {
         e.preventDefault();
+        if (!validateDueDate(newTask.dueDate)) {
+            toast.error("Task due date must be on or before the project end date.");
+            return;
+        }
         try {
             const response = await axios.post(`http://localhost:3000/api/projects/${projectID}/tasks`, newTask);
             console.log("Task created:", response.data);
@@ -82,7 +96,6 @@ export default function NewTaskForm({ handleClose, priority, projectID }) {
                         placeholder="Description" 
                         value={newTask.description} 
                         onChange={handleInputChange} 
-                        required 
                         className="w-full px-4 py-2 border border-gray-300 rounded-md"
                     />
                     <label htmlFor="dueDate">Task Due Date</label>

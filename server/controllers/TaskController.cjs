@@ -74,3 +74,30 @@ exports.fetchTasks = async (req, res) => {
         res.status(500).json({ message: "Error fetching tasks", error: error.message });
     }
 };
+
+exports.updateSubtask = async (req, res) => {
+    try {
+        const { projectID, taskId, subtaskId } = req.params;
+        const { completed } = req.body;
+
+        const task = await Task.findOne({ _id: taskId, projectID: projectID });
+
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+
+        const subtask = task.subTasks.id(subtaskId);
+
+        if (!subtask) {
+            return res.status(404).json({ message: "Subtask not found" });
+        }
+
+        subtask.completed = completed;
+        await task.save();
+
+        res.status(200).json({ message: "Subtask updated successfully", task });
+    } catch (error) {
+        console.error("Error updating subtask:", error);
+        res.status(500).json({ message: "Error updating subtask", error: error.message });
+    }
+};

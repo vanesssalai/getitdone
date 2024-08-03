@@ -2,15 +2,19 @@ const Project = require("../models/Project.cjs");
 
 exports.createProject = async (req, res) => {
     try {
-        const { title, description, dueDate, tags, backgroundColor, userID } = req.body;
+        const { title, description, startDate, endDate, tags, backgroundColor, userID } = req.body;
+
+        if (!title || !description || !startDate || !endDate || !userID) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
 
         const project = new Project({
             title,
             description,
-            dueDate,
+            startDate,
+            endDate,
             tags: Array.isArray(tags) ? tags : [],
             backgroundColor,
-            createDate: new Date(),
             userID
         });
 

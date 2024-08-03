@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { FaTimes, FaSquare } from "react-icons/fa";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function NewProjectForm({ handleClose }) {
     const { userID } = useParams();
     const [newProject, setNewProject] = useState({ 
         title: "", 
         description: "", 
-        dueDate: "", 
+        startDate: "", 
+        endDate: "", 
         tags: "",
         backgroundColor: "#d1d5db", 
         userID 
@@ -24,12 +27,29 @@ export default function NewProjectForm({ handleClose }) {
 
     const handleCreateProject = async (e) => {
         e.preventDefault();
+        const start = new Date(newProject.startDate);
+        const end = new Date(newProject.endDate);
+    
+        if (end < start) {
+            toast.error("End date cannot be earlier than start date", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            return; 
+        }
+
         try {
             const response = await axios.post(`http://localhost:3000/api/projects/${userID}`, { ...newProject, userID });
             setNewProject({ 
                 title: "", 
                 description: "", 
-                dueDate: "", 
+                startDate: "", 
+                endDate: "",  
                 tags: "", 
                 backgroundColor: "#d1d5db",
                 userID 
@@ -83,16 +103,27 @@ export default function NewProjectForm({ handleClose }) {
                         placeholder="Description" 
                         value={newProject.description} 
                         onChange={handleInputChange} 
+                        // required 
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                    />
+                    <label htmlFor="startDate">Project Start Date</label>
+                    <input 
+                        id="startDate"
+                        type="date" 
+                        name="startDate" 
+                        placeholder="Start Date" 
+                        value={newProject.startDate} 
+                        onChange={handleInputChange} 
                         required 
                         className="w-full px-4 py-2 border border-gray-300 rounded-md"
                     />
-                    <label htmlFor="dueDate">Project Duedate</label>
+                    <label htmlFor="endDate">Project End Date</label>
                     <input 
-                        id="dueDate"
+                        id="endDate"
                         type="date" 
-                        name="dueDate" 
-                        placeholder="Due Date" 
-                        value={newProject.dueDate} 
+                        name="endDate" 
+                        placeholder="End Date" 
+                        value={newProject.endDate} 
                         onChange={handleInputChange} 
                         required 
                         className="w-full px-4 py-2 border border-gray-300 rounded-md"

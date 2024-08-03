@@ -7,9 +7,13 @@ const projectSchema = new mongoose.Schema({
     },
     description: {
         type: String,
+        // required: true,
+    },
+    startDate: {
+        type: String,
         required: true,
     },
-    dueDate: {
+    endDate: {
         type: String,
         required: true,
     },
