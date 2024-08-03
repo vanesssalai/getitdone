@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { createTask, updateTask, deleteTask, fetchTasks, updateSubtask } = require('../controllers/TaskController.cjs');
+const { createTask, updateTask, deleteTask, fetchTasks, updateSubtask, fetchAllTasks } = require('../controllers/TaskController.cjs');
 
+router.get('/user/:userId/tasks', fetchAllTasks);
 router.get('/:projectID/tasks', fetchTasks);
 router.post('/:projectID/tasks', createTask);
 router.put('/:projectID/tasks/:taskId', updateTask);

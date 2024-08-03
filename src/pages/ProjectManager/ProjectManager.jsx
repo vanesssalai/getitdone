@@ -9,16 +9,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import Format from "../../layout/Format";
 import NewProjectForm from "../../components/NewProject/NewProject";
 import { calculateProgress, timeToEnd } from "../../components/ProgressCalculator/ProgressCalculator";
+import RenderTask from "../../components/Tasks/RenderTask";
+import { createToggleSubtaskCompletion, createToggleTaskCompletion } from "../../components/Tasks/TaskHandling";
 
 export default function ProjectManager() {
     const { userID } = useParams();
     const [projects, setProjects] = useState([]);
     const [createProject, setCreateProject] = useState(false);
+    const [dueSoonTasks, setDueSoonTasks] = useState([]);
+    const [openSubtasks, setOpenSubtasks] = useState(null);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchProjects();
+        fetchTasks();
     }, []);
 
     const fetchProjects = async () => {
@@ -30,6 +35,36 @@ export default function ProjectManager() {
             console.error("Error fetching projects:", error.response ? error.response.data : error.message);
         }
     };
+
+    const fetchTasks = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3000/api/projects/user/${userID}/tasks`);
+            const fetchedTasks = response.data;
+            console.log(response.data);
+    
+            const currentDate = new Date();
+            
+            const dueSoon = fetchedTasks.filter(task => {
+                const dueDate = new Date(task.dueDate);
+                const timeDifference = dueDate - currentDate;
+                const daysDifference = timeDifference / (1000 * 3600 * 24);
+                return daysDifference <= 7 && daysDifference >= 0;
+            });
+    
+            const sortedTasks = {
+                high: dueSoon.filter(task => task.priority === 'high'),
+                medium: dueSoon.filter(task => task.priority === 'medium'),
+                low: dueSoon.filter(task => task.priority === 'low')
+            };
+
+            setDueSoonTasks(sortedTasks);            
+        } catch (error) {
+            console.error("Error fetching tasks:", error.response ? error.response.data : error.message);
+        }
+    };    
+
+    const toggleTaskCompletion = createToggleTaskCompletion(fetchTasks, toast);
+    const toggleSubtaskCompletion = createToggleSubtaskCompletion(fetchTasks, toast);
 
     const handleCreateProject = () => {
         setCreateProject(true);
@@ -101,7 +136,43 @@ export default function ProjectManager() {
                         </ul>
                     </div>
                     <div className="py-4">
-                        <h2 className="text-3xl font-bold my-2">Due Soon</h2>
+                        <h2 className="text-3xl font-bold my-2">Tasks Due Soon</h2>
+                        {dueSoonTasks.high && dueSoonTasks.high.map(task => (
+                            <ul className="flex flex-col items-center space-y-4 p-4 w-3/5 bg-red-100 my-1">
+                                <RenderTask
+                                    key={task._id}
+                                    task={task}
+                                    toggleTaskCompletion={toggleTaskCompletion}
+                                    toggleSubtaskCompletion={toggleSubtaskCompletion}
+                                    openSubtasks={openSubtasks}
+                                    setOpenSubtasks={setOpenSubtasks}
+                                />
+                            </ul>
+                        ))}
+                        {dueSoonTasks.medium && dueSoonTasks.medium.map(task => (
+                            <ul className="flex flex-col items-center space-y-4 p-4 w-3/5 bg-amber-100 my-1">
+                                <RenderTask
+                                    key={task._id}
+                                    task={task}
+                                    toggleTaskCompletion={toggleTaskCompletion}
+                                    toggleSubtaskCompletion={toggleSubtaskCompletion}
+                                    openSubtasks={openSubtasks}
+                                    setOpenSubtasks={setOpenSubtasks}
+                                />
+                            </ul>
+                        ))}
+                        {dueSoonTasks.low && dueSoonTasks.low.map(task => (
+                            <ul className="flex flex-col items-center space-y-4 p-4 w-3/5 bg-green-100 my-1"> 
+                                <RenderTask
+                                    key={task._id}
+                                    task={task}
+                                    toggleTaskCompletion={toggleTaskCompletion}
+                                    toggleSubtaskCompletion={toggleSubtaskCompletion}
+                                    openSubtasks={openSubtasks}
+                                    setOpenSubtasks={setOpenSubtasks}
+                                />
+                            </ul>
+                        ))}
                     </div>
                 </div>
             </>

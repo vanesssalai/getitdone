@@ -101,3 +101,24 @@ exports.updateSubtask = async (req, res) => {
         res.status(500).json({ message: "Error updating subtask", error: error.message });
     }
 };
+
+exports.fetchAllTasks = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const userProjects = await Project.find({ userID: userId });
+        const projectIds = userProjects.map(project => project._id);
+
+        const tasks = await Task.find({
+            projectID: { $in: projectIds },
+            $or: [
+                { completed: false, subTasks: { $size: 0 } },  
+                { completed: false, 'subTasks.completed': false } 
+            ]
+        });
+
+        res.status(200).json(tasks);
+    } catch (error) {
+        console.error("Error fetching all tasks:", error);
+        res.status(500).json({ message: "Error fetching all tasks", error: error.message });
+    }
+};
