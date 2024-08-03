@@ -8,7 +8,7 @@ const RenderAllTasks = ({ tasks, toggleTaskCompletion, toggleSubtaskCompletion, 
     return (
         <>
             <div className="flex flex-col items-center py-4 px-2 bg-red-50 flex-1 m-2 h-fit">
-                <h3>High Priority</h3>
+                <h3 className="text-l font-bold text-red-600">High Priority</h3>
                 <ul className="flex flex-col items-center space-y-4 w-full">
                     {tasks.high.map(task => (
                         <RenderTask
@@ -31,7 +31,7 @@ const RenderAllTasks = ({ tasks, toggleTaskCompletion, toggleSubtaskCompletion, 
                 </ul>
             </div>
             <div className="flex flex-col items-center py-4 px-2 bg-amber-50 flex-1 m-2 h-fit">
-                <h3>Medium Priority</h3>
+                <h3 className="text-l font-bold text-amber-600">Medium Priority</h3>
                 <ul className="flex flex-col items-center space-y-4 w-full">
                     {tasks.medium.map(task => (
                         <RenderTask
@@ -54,7 +54,7 @@ const RenderAllTasks = ({ tasks, toggleTaskCompletion, toggleSubtaskCompletion, 
                 </ul>
             </div>
             <div className="flex flex-col items-center py-4 px-2 bg-green-50 flex-1 m-2 h-fit">
-                <h3>Low Priority</h3>
+                <h3 className="text-l font-bold text-green-600">Low Priority</h3>
                 <ul className="flex flex-col items-center space-y-4 w-full">
                     {tasks.low.map(task => (
                         <RenderTask

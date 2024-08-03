@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaPlus } from "react-icons/fa";
-import { FaExclamationCircle } from "react-icons/fa";
+import { FaPlus, FaAngleRight, FaExclamationCircle } from "react-icons/fa";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Format from "../../layout/Format";
 import NewProjectForm from "../../components/NewProject/NewProject";
 import { calculateProgress, timeToEnd } from "../../components/ProgressCalculator/ProgressCalculator";
-import RenderTask from "../../components/Tasks/RenderTask";
-import { createToggleSubtaskCompletion, createToggleTaskCompletion } from "../../components/Tasks/TaskHandling";
 
 export default function ProjectManager() {
     const { userID } = useParams();
@@ -62,9 +59,6 @@ export default function ProjectManager() {
             console.error("Error fetching tasks:", error.response ? error.response.data : error.message);
         }
     };    
-
-    const toggleTaskCompletion = createToggleTaskCompletion(fetchTasks, toast);
-    const toggleSubtaskCompletion = createToggleSubtaskCompletion(fetchTasks, toast);
 
     const handleCreateProject = () => {
         setCreateProject(true);
@@ -137,42 +131,66 @@ export default function ProjectManager() {
                     </div>
                     <div className="py-4">
                         <h2 className="text-3xl font-bold my-2">Tasks Due Soon</h2>
-                        {dueSoonTasks.high && dueSoonTasks.high.map(task => (
-                            <ul className="flex flex-col items-center space-y-4 p-4 w-3/5 bg-red-100 my-1">
-                                <RenderTask
-                                    key={task._id}
-                                    task={task}
-                                    toggleTaskCompletion={toggleTaskCompletion}
-                                    toggleSubtaskCompletion={toggleSubtaskCompletion}
-                                    openSubtasks={openSubtasks}
-                                    setOpenSubtasks={setOpenSubtasks}
-                                />
-                            </ul>
-                        ))}
-                        {dueSoonTasks.medium && dueSoonTasks.medium.map(task => (
-                            <ul className="flex flex-col items-center space-y-4 p-4 w-3/5 bg-amber-100 my-1">
-                                <RenderTask
-                                    key={task._id}
-                                    task={task}
-                                    toggleTaskCompletion={toggleTaskCompletion}
-                                    toggleSubtaskCompletion={toggleSubtaskCompletion}
-                                    openSubtasks={openSubtasks}
-                                    setOpenSubtasks={setOpenSubtasks}
-                                />
-                            </ul>
-                        ))}
-                        {dueSoonTasks.low && dueSoonTasks.low.map(task => (
-                            <ul className="flex flex-col items-center space-y-4 p-4 w-3/5 bg-green-100 my-1"> 
-                                <RenderTask
-                                    key={task._id}
-                                    task={task}
-                                    toggleTaskCompletion={toggleTaskCompletion}
-                                    toggleSubtaskCompletion={toggleSubtaskCompletion}
-                                    openSubtasks={openSubtasks}
-                                    setOpenSubtasks={setOpenSubtasks}
-                                />
-                            </ul>
-                        ))}
+                        {Object.keys(dueSoonTasks).length > 0 ? (
+                            <>
+                            {dueSoonTasks.high.length > 0 && (
+                                <div className="my-4">
+                                    <h3 className="text-xl font-bold text-red-600">High Priority</h3>
+                                    <ul className="flex flex-col items-center space-y-4 p-4 w-3/5 bg-red-100 rounded-lg">
+                                        {dueSoonTasks.high.map(task => (
+                                            <li key={task._id} 
+                                                onClick={() => handleProjectNavigation(task.projectID)} 
+                                                className="cursor-pointer w-4/5 bg-white p-2 rounded-lg justify-between flex hover:bg-red-50 group"
+                                            >
+                                                <span className="">{task.title}</span>
+                                                <span className="hidden group-hover:flex items-center text-sm text-gray-500">
+                                                    View in project <FaAngleRight />
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                            {dueSoonTasks.medium.length > 0 && (
+                                <div className="my-4">
+                                    <h3 className="text-xl font-bold text-amber-600">Medium Priority</h3>
+                                    <ul className="flex flex-col items-center space-y-4 p-4 w-3/5 bg-amber-100 rounded-lg">
+                                        {dueSoonTasks.medium.map(task => (
+                                            <li key={task._id} 
+                                                onClick={() => handleProjectNavigation(task.projectID)} 
+                                                className="cursor-pointer w-4/5 bg-white p-2 rounded-lg justify-between flex hover:bg-amber-50 group"
+                                            >
+                                                <span className="">{task.title}</span>
+                                                <span className="hidden group-hover:flex items-center text-sm text-gray-500">
+                                                    View in project <FaAngleRight />
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                            {dueSoonTasks.low.length > 0 && (
+                                <div className="my-4">
+                                    <h3 className="text-xl font-bold text-green-600">Low Priority</h3>
+                                    <ul className="flex flex-col items-center space-y-4 p-4 w-3/5 bg-green-100 rounded-lg">
+                                        {dueSoonTasks.low.map(task => (
+                                            <li key={task._id} 
+                                                onClick={() => handleProjectNavigation(task.projectID)} 
+                                                className="cursor-pointer w-4/5 bg-white p-2 rounded-lg justify-between flex hover:bg-green-50 group"
+                                            >
+                                                <span className="">{task.title}</span>
+                                                <span className="hidden group-hover:flex items-center text-sm text-gray-500">
+                                                    View in project <FaAngleRight />
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </>                        
+                        ) : (
+                            <h3>No tasks due soon</h3>
+                        )}
                     </div>
                 </div>
             </>
