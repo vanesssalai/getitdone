@@ -15,7 +15,7 @@ const ProjectRoutes = require("./routes/ProjectManagerRoute.cjs");
 const ProfileRoutes = require("./routes/ProfileRoute.cjs");
 const TaskRoutes = require("./routes/TaskRoutes.cjs");
 
-const uri = `mongodb+srv://${encodeURIComponent(process.env.MONGO_USER)}:${encodeURIComponent(process.env.MONGO_PASSWORD)}@vanessa.cmfcsdg.mongodb.net/task-manager?retryWrites=true&w=majority&appName=vanessa`;
+const uri = `mongodb+srv://${encodeURIComponent(process.env.MONGO_USER)}:${encodeURIComponent(process.env.MONGO_PASSWORD)}@${process.env.MONGO_HOST}/${process.env.MONGO_DB}?retryWrites=true&w=majority&appName=vanessa`;
 
 mongoose.connect(uri)
     .then(() => console.log('Connected to MongoDB'))
