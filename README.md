@@ -12,6 +12,8 @@ Project Manager using MERN stack
 ## Try It Out
 Clone the repo: `https://github.com/vanesssalai/getitdone`
 
+Update the .env file to include your MongoDB keys
+
 Run in the project directory:
 
 `npm install`
