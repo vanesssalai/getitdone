@@ -14,7 +14,6 @@ export default function ProjectManager() {
     const [projects, setProjects] = useState([]);
     const [createProject, setCreateProject] = useState(false);
     const [dueSoonTasks, setDueSoonTasks] = useState([]);
-    const [openSubtasks, setOpenSubtasks] = useState(null);
 
     const navigate = useNavigate();
 
@@ -80,6 +79,7 @@ export default function ProjectManager() {
                 <div className="px-12 py-4">
                     {createProject && (<NewProjectForm handleClose={handleCloseCreateProject} />)}
                     <div className="py-4">
+                    <h3 className="text-l ">Try the GetItDone telegram bot <a className="underline hover:text-red-600" href="https://t.me/GetItDoneBotBot">Here</a>!</h3>
                         <h2 className="text-3xl font-bold my-2">Projects</h2>
                         <ul className="flex flex-wrap gap-4">
                             {projects.map(project => (

@@ -8,9 +8,6 @@ export default function Header({userID}) {
                     <li>
                         <a href={`/Home/${userID}`} className="">Home</a>
                     </li>
-                    <li>
-                        <a href="#" className="">Calendar</a>
-                    </li>
                 </ul>
             </nav>
         </header>
