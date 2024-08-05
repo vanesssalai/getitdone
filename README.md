@@ -1,10 +1,21 @@
 # Project Manager
-a simple project management system using MERN stack
-By Vanessa Lai
+Project Manager using MERN stack 
 
-# Features
-## Project Manager
+## Tech Stack
++ MongoDB
++ Express
++ React
++ Node
++ tailwindCSS
++ telegraf (for telegram chat bot)
 
-## Task Manager
+## Try It Out
+Clone the repo: `https://github.com/vanesssalai/getitdone`
 
-## Google Calendar Integration
+Run in the project directory:
+
+`npm install`
+
+`node server/server.cjs`
+
+`npm run dev`
