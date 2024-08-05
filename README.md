@@ -20,4 +20,6 @@ Run in the project directory:
 
 `node server/server.cjs`
 
+`node server/bot.cjs`
+
 `npm run dev`
