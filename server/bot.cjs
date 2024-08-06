@@ -38,18 +38,19 @@ bot.use((new LocalSession({ database: 'telebot_db.json' })).middleware());
 
 bot.command('start', (ctx) => {
     console.log('Start command received');
-    ctx.reply('Please login before using GetItDoneBot.\n Please enter your email:');
+    ctx.reply('Please Login before sending commands  (￣￢￣ヾ)\nEnter your email\n  or \nSignup via the GetItDone site');
     ctx.session.state = 'waiting_for_email';
 });
 
 bot.command('help', (ctx) => {
     console.log('Help command received');
-    ctx.reply('This bot can perform the following commands:\n /start to start the bot\n /help to list commands\n /viewtasks to view all incomplete tasks\n /viewalltasks to view all incomplete tasks and subtasks\n /joke to get a random joke');
+    ctx.reply('(⚈∇⚈ ) I can perform the following commands:\n /start to start the bot\n /help to list commands\n /viewtasks to view all incomplete tasks\n /viewalltasks to view all incomplete tasks and subtasks\n /markcomplete to mark a task or subtask as complete\n /joke to get a random joke');
 });
 
 bot.command('viewtasks', async (ctx) => {    
     if (!ctx.session || ctx.session.state !== 'authenticated') {
-        ctx.reply('You must be authenticated to use this command.');
+        ctx.reply('Please Login before sending commands  (￣￢￣ヾ)\nEnter your email\n  or \nSignup via the GetItDone site');
+        ctx.session.state = 'waiting_for_email';
         return;
     }
 
@@ -72,18 +73,18 @@ bot.command('viewtasks', async (ctx) => {
 
             let message = 'Ongoing Projects and Incomplete Tasks:\n\n';
             projects.forEach(project => {
-                message += `Project: ${project.title}\n`;
+                message += `*${project.title}*\n`;
                 const incompleteTasks = project.tasks.filter(task => !isTaskCompleted(task));
                 if (incompleteTasks.length > 0) {
                     incompleteTasks.forEach(task => {
-                        message += `  - Task: ${task.title} (Due: ${task.dueDate})\n`;
+                        message += `  - ${task.title} (Due: ${task.dueDate})\n`;
                     });
                 } else {
                     message += '  No incomplete tasks.\n';
                 }
                 message += '\n';
             });
-            ctx.reply(message.trim());
+            ctx.replyWithMarkdown(message.trim());
         }
     } catch (error) {
         console.error('Error in viewtasks command:', error);
@@ -93,7 +94,8 @@ bot.command('viewtasks', async (ctx) => {
 
 bot.command('viewalltasks', async (ctx) => {    
     if (!ctx.session || ctx.session.state !== 'authenticated') {
-        ctx.reply('You must be authenticated to use this command.');
+        ctx.reply('Please Login before sending commands  (￣￢￣ヾ)\nEnter your email\n  or \nSignup via the GetItDone site');
+        ctx.session.state = 'waiting_for_email';
         return;
     }
 
@@ -116,14 +118,16 @@ bot.command('viewalltasks', async (ctx) => {
 
             let message = 'Ongoing Projects and Incomplete Tasks:\n\n';
             projects.forEach(project => {
-                message += `Project: ${project.title}\n`;
+                message += `*${project.title}*\n`;
                 const incompleteTasks = project.tasks.filter(task => !isTaskCompleted(task));
                 if (incompleteTasks.length > 0) {
                     incompleteTasks.forEach(task => {
-                        message += `  - Task: ${task.title} (Due: ${task.dueDate})\n`;
+                        message += `  - ${task.title} (Due: ${task.dueDate})\n`;
                         if (task.subTasks.length > 0) {
                             task.subTasks.forEach(subTask => {
-                                message += `    - Subtask: ${subTask.title} (Completed: ${subTask.completed})\n`;
+                                if (!subTask.completed) {
+                                    message += `    - Subtask: ${subTask.title}\n`;
+                                }
                             });
                         }
                     });
@@ -132,7 +136,7 @@ bot.command('viewalltasks', async (ctx) => {
                 }
                 message += '\n';
             });
-            ctx.reply(message.trim());
+            ctx.replyWithMarkdown(message.trim());
         }
     } catch (error) {
         console.error('Error in viewtasks command:', error);
@@ -142,9 +146,13 @@ bot.command('viewalltasks', async (ctx) => {
 
 bot.command('markcomplete', async (ctx) => {
     if (!ctx.session || ctx.session.state !== 'authenticated') {
-        ctx.reply('You must be authenticated to use this command.');
+        ctx.reply('Please Login before sending commands  (￣￢￣ヾ)\nEnter your email\n  or \nSignup via the GetItDone site');
+        ctx.session.state = 'waiting_for_email';
         return;
     }
+
+    ctx.reply('Which task or subtask would you like to mark as complete?')
+    ctx.session.state = 'waiting_for_task';
 });
 
 bot.command('joke', async (ctx) => {
@@ -162,6 +170,10 @@ bot.command('joke', async (ctx) => {
     }
 });
 
+bot.hears(['hello', 'Hello', 'HELLO', 'hi', 'Hi', 'HI'], async (ctx) => {
+    await ctx.reply('hello ヽ (°◇° )ノ')
+});
+
 bot.on('text', async (ctx) => {
     console.log('Text received:', ctx.message.text);
     
@@ -176,7 +188,7 @@ bot.on('text', async (ctx) => {
 
         ctx.session.user = user;
         ctx.session.state = 'waiting_for_password';
-        ctx.reply('Please enter your password:');
+        ctx.reply('Please enter your password ');
     } else if (ctx.session.state === 'waiting_for_password') {
         const password = ctx.message.text;
 
@@ -207,18 +219,54 @@ bot.on('text', async (ctx) => {
 
             let message = 'Ongoing Projects and Incomplete Tasks:\n\n';
             projects.forEach(project => {
-                message += `Project: ${project.title}\n`;
+                message += `*${project.title}*\n`;
                 const incompleteTasks = project.tasks.filter(task => !isTaskCompleted(task));
                 if (incompleteTasks.length > 0) {
                     incompleteTasks.forEach(task => {
-                        message += `  - Task: ${task.title} (Due: ${task.dueDate})\n`;
+                        message += `  - ${task.title} (Due: ${task.dueDate})\n`;
                     });
                 } else {
                     message += '  No incomplete tasks.\n';
                 }
                 message += '\n';
             });
-            ctx.reply(message.trim())
+            ctx.replyWithMarkdown(message.trim());
+        }
+    } else if (ctx.session.state === 'waiting_for_task') {
+        const taskTitle = ctx.message.text.trim();
+        try {
+            const task = await Task.findOne({
+                $or: [
+                    { title: taskTitle },
+                    { 'subTasks.title': taskTitle }
+                ],
+                projectID: { $in: await Project.find({ userID: ctx.session.user._id }).select('_id') }
+            });
+    
+            if (!task) {
+                ctx.reply('Task or subtask not found. Please try again with a valid task or subtask title.');
+                return;
+            }
+    
+            if (task.title === taskTitle) {
+                task.completed = true;
+                await task.save();
+                ctx.reply(`${taskTitle} has been marked as complete.`);
+            } else {
+                const subtask = task.subTasks.find(st => st.title === taskTitle);
+                if (subtask) {
+                    subtask.completed = true;
+                    await task.save();
+                    ctx.reply(`${taskTitle} has been marked as complete.`);
+                } else {
+                    ctx.reply('Subtask not found. Please try again with a valid subtask title.');
+                }
+            }
+            
+            ctx.session.state = 'authenticated';
+        } catch (error) {
+            console.error('Error marking task as complete:', error);
+            ctx.reply('An error occurred while marking the task as complete. Please try again later.');
         }
     }
 });

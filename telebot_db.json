@@ -1,0 +1,17 @@
+{
+  "sessions": [
+    {
+      "id": "1042440256:1042440256",
+      "data": {
+        "state": "authenticated",
+        "user": {
+          "_id": "66a8be3e86d06f50a2c63009",
+          "email": "vlaiyz2605@gmail.com",
+          "username": "vanessa",
+          "password": "$2a$10$dZlza90h45d2GBaydO01zuB8lVPIXMQcL9rwm/Z/gby2wZ7o6Asrq",
+          "__v": 0
+        }
+      }
+    }
+  ]
+}
