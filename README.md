@@ -1,6 +1,8 @@
 # Project Manager
 Project Manager using MERN stack 
 
+![getitdone](/public/getitdone.png)
+
 ## Tech Stack
 + MongoDB
 + Express
@@ -8,6 +10,10 @@ Project Manager using MERN stack
 + Node
 + tailwindCSS
 + telegraf (for telegram chat bot)
+
+## Features
+1. CRUD of projects and tasks
+2. Telegram bot
 
 ## Try It Out
 Clone the repo: `https://github.com/vanesssalai/getitdone`
